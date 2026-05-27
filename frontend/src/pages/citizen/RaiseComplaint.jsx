@@ -41,14 +41,20 @@ export default function RaiseComplaint() {
   const [files, setFiles] = useState([]);
   const fileInputRef = useRef(null);
 
+  console.log("RaiseComplaint rendered/mounted");
+
   useEffect(() => {
+    console.log("RaiseComplaint initial useEffect fired");
+    console.log("Calling getCategories...");
     masterService.getCategories().then(data => {
       setCategories(data.map(c => ({ value: c.id, label: c.name })));
     }).catch(err => {
       console.error(err);
       showToast('Failed to load categories', 'error');
     });
+    console.log("Calling getDistricts...");
     masterService.getDistricts().then(data => {
+      console.log("getDistricts success", data);
       setDistricts(data.map(d => ({ value: d.id, label: d.name })));
     }).catch(err => {
       console.error(err);
@@ -58,6 +64,7 @@ export default function RaiseComplaint() {
 
   useEffect(() => {
     if (form.districtId) {
+      console.log(`Calling getWards for districtId: ${form.districtId}...`);
       masterService.getWards(form.districtId).then(data => {
         setWards(data.map(w => ({ value: w.id, label: `${w.ward_number} - ${w.ward_name || ''}` })));
         setForm(f => ({ ...f, wardId: '', areaId: '', locationDetailId: '' }));
@@ -72,6 +79,7 @@ export default function RaiseComplaint() {
 
   useEffect(() => {
     if (form.wardId) {
+      console.log(`Calling getAreas for wardId: ${form.wardId}...`);
       masterService.getAreas(form.wardId).then(data => {
         setAreas(data.map(a => ({ value: a.id, label: a.name })));
         setForm(f => ({ ...f, areaId: '', locationDetailId: '' }));
@@ -86,6 +94,7 @@ export default function RaiseComplaint() {
 
   useEffect(() => {
     if (form.areaId) {
+      console.log(`Calling getLocationDetails for areaId: ${form.areaId}...`);
       masterService.getLocationDetails(form.areaId).then(data => {
         setLocationDetails(data.map(l => ({ value: l.id, label: l.street_name || l.landmark })));
         setForm(f => ({ ...f, locationDetailId: '' }));
