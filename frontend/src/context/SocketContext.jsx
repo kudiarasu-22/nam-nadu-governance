@@ -17,8 +17,18 @@ export function SocketProvider({ children }) {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    // Only connect when authenticated and WS_BASE_URL is provided
-    if (!isAuthenticated || !user || !WS_BASE_URL) {
+    // In production, or if no valid websocket URL is provided, disable sockets completely
+    if (import.meta.env.PROD || !WS_BASE_URL || WS_BASE_URL.includes('127.0.0.1') || WS_BASE_URL.includes('localhost')) {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+        setIsConnected(false);
+      }
+      return;
+    }
+
+    // Only connect when authenticated
+    if (!isAuthenticated || !user) {
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current = null;

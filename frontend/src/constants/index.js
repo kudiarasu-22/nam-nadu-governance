@@ -9,10 +9,17 @@ export const APP_VERSION = import.meta.env.VITE_APP_VERSION || '1.0.0';
 // Helper to ensure API URLs are correctly formatted without duplicate /api/v1 paths
 const getApiBaseUrl = () => {
   let rawApiUrl = import.meta.env.VITE_API_URL || '';
+  
+  // If no API URL is provided, or if it accidentally contains a dev localhost in production, fallback to a relative path
+  if (!rawApiUrl || rawApiUrl.includes('127.0.0.1') || rawApiUrl.includes('localhost')) {
+    rawApiUrl = ''; // Relative path allows Vite proxy to work in dev
+  }
+
   // Remove all trailing slashes
   rawApiUrl = rawApiUrl.replace(/\/+$/, '');
   // Remove any trailing /api/v1 or /api to avoid duplication
   rawApiUrl = rawApiUrl.replace(/(\/api\/v1|\/api)+$/, '');
+  
   // Append standard /api/v1
   return `${rawApiUrl}/api/v1`;
 };

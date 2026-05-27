@@ -44,10 +44,10 @@ export default function RaiseComplaint() {
   useEffect(() => {
     masterService.getCategories().then(data => {
       setCategories(data.map(c => ({ value: c.id, label: c.name })));
-    }).catch(err => console.error("Failed to load categories", err));
+    });
     masterService.getDistricts().then(data => {
       setDistricts(data.map(d => ({ value: d.id, label: d.name })));
-    }).catch(err => console.error("Failed to load districts", err));
+    });
   }, []);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function RaiseComplaint() {
       masterService.getWards(form.districtId).then(data => {
         setWards(data.map(w => ({ value: w.id, label: `${w.ward_number} - ${w.ward_name || ''}` })));
         setForm(f => ({ ...f, wardId: '', areaId: '', locationDetailId: '' }));
-      }).catch(err => console.error("Failed to load wards", err));
+      });
     } else {
       setWards([]);
     }
@@ -66,7 +66,7 @@ export default function RaiseComplaint() {
       masterService.getAreas(form.wardId).then(data => {
         setAreas(data.map(a => ({ value: a.id, label: a.name })));
         setForm(f => ({ ...f, areaId: '', locationDetailId: '' }));
-      }).catch(err => console.error("Failed to load areas", err));
+      });
     } else {
       setAreas([]);
     }
@@ -77,7 +77,7 @@ export default function RaiseComplaint() {
       masterService.getLocationDetails(form.areaId).then(data => {
         setLocationDetails(data.map(l => ({ value: l.id, label: l.street_name || l.landmark })));
         setForm(f => ({ ...f, locationDetailId: '' }));
-      }).catch(err => console.error("Failed to load location details", err));
+      });
     } else {
       setLocationDetails([]);
     }
@@ -197,7 +197,7 @@ export default function RaiseComplaint() {
       });
       setFiles([]);
       if (!isDraft) {
-        navigate('/complaints');
+        navigate('/citizen/track');
       }
     } catch (error) {
       showToast(error?.response?.data?.detail || 'An error occurred', 'error');
