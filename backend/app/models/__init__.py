@@ -19,6 +19,9 @@ from app.models.notification import Notification
 from app.models.feedback import PublicFeedback, Vote, Volunteer, EmergencyAlert
 from app.models.analytics import Analytics
 from app.models.master import District, Ward, Area, LocationDetail, ComplaintCategory
+from app.models.leadership import (
+    MlaProfile, MlaAuth, MlaPerformance, MlaNotification, MlaLoginAudit, CmDashboardStat
+)
 
 __all__ = [
     # Enums
@@ -32,4 +35,7 @@ __all__ = [
     "EmergencyAlert", "Analytics",
     # Master Models
     "District", "Ward", "Area", "LocationDetail", "ComplaintCategory",
+    # Leadership Models
+    "MlaProfile", "MlaAuth", "MlaPerformance", "MlaNotification",
+    "MlaLoginAudit", "CmDashboardStat",
 ]

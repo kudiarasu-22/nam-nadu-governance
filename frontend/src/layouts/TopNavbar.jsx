@@ -18,7 +18,10 @@ export default function TopNavbar({ sidebarCollapsed, onToggleSidebar }) {
   const notifRef = useClickOutside(() => setShowNotifications(false));
 
   useEffect(() => {
-    if (user) {
+    // Isolated roles (MLA, CM_ADMIN) do not have standard citizen notifications.
+    // Fetching here with their isolated tokens will cause a 401 error since
+    // the backend expects an integer User ID, triggering an interceptor loop.
+    if (user && !['mla', 'cm_admin'].includes(user.role)) {
       complaintService.getNotifications()
         .then(data => setNotifications(data))
         .catch(err => console.error("Failed to fetch notifications", err));

@@ -64,9 +64,20 @@ export function AuthProvider({ children }) {
 
       if (token && storedUser) {
         try {
-          // Verify token by fetching current user
-          const user = await authService.getMe();
-          dispatch({ type: AUTH_ACTIONS.SET_USER, payload: user });
+          const parsedUser = JSON.parse(storedUser);
+          if (parsedUser.role === 'mla') {
+            // Wait, we need an endpoint for MLA me, or just trust it for now
+            // I'll call leadership/profile
+            const { leadershipService } = await import('@/services/leadership.service');
+            const profile = await leadershipService.getProfile();
+            dispatch({ type: AUTH_ACTIONS.SET_USER, payload: { ...parsedUser, ...profile } });
+          } else if (parsedUser.role === 'cm_admin') {
+            dispatch({ type: AUTH_ACTIONS.SET_USER, payload: parsedUser });
+          } else {
+            // Verify token by fetching current user
+            const user = await authService.getMe();
+            dispatch({ type: AUTH_ACTIONS.SET_USER, payload: user });
+          }
         } catch {
           // Token invalid — clear storage
           localStorage.removeItem(TOKEN_KEY);
@@ -99,6 +110,26 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  // CM Admin Login
+  const cmAdminLogin = useCallback(async (email, password) => {
+    dispatch({ type: AUTH_ACTIONS.LOGIN_START });
+    try {
+      const { leadershipService } = await import('@/services/leadership.service');
+      const data = await leadershipService.cmLogin(email, password);
+      localStorage.setItem(TOKEN_KEY, data.access_token);
+      if (data.refresh_token) {
+        localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
+      }
+      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+      dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: data.user });
+      return data;
+    } catch (error) {
+      const message = error.response?.data?.detail || 'CM Admin login failed. Please check credentials.';
+      dispatch({ type: AUTH_ACTIONS.LOGIN_FAILURE, payload: message });
+      throw error;
+    }
+  }, []);
+
   // Register — always redirects to login after success (backend returns no tokens)
   const register = useCallback(async (userData) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
@@ -108,6 +139,35 @@ export function AuthProvider({ children }) {
       return data;
     } catch (error) {
       const message = error.response?.data?.detail || 'Registration failed.';
+      dispatch({ type: AUTH_ACTIONS.LOGIN_FAILURE, payload: message });
+      throw error;
+    }
+  }, []);
+
+  // MLA Login
+  const mlaLogin = useCallback(async (mla_id, password) => {
+    dispatch({ type: AUTH_ACTIONS.LOGIN_START });
+    try {
+      const { leadershipService } = await import('@/services/leadership.service');
+      const data = await leadershipService.mlaLogin(mla_id, password);
+      
+      localStorage.setItem(TOKEN_KEY, data.access_token);
+      
+      const userData = {
+        id: data.mla_id,
+        name: data.name,
+        email: `${data.mla_id}@namnadu.gov.in`, // mock email
+        role: 'mla',
+        is_active: true,
+        ward_id: data.ward_id,
+        district_id: data.district_id,
+      };
+      localStorage.setItem(USER_KEY, JSON.stringify(userData));
+      
+      dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: userData });
+      return data;
+    } catch (error) {
+      const message = error.response?.data?.detail || 'MLA login failed. Please check credentials.';
       dispatch({ type: AUTH_ACTIONS.LOGIN_FAILURE, payload: message });
       throw error;
     }
@@ -127,6 +187,15 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  // MLA Logout (Alias for logout, to fulfill dedicated method requirement)
+  const mlaLogout = logout;
+
+  // Get Current MLA
+  const getCurrentMLA = useCallback(() => {
+    if (state.user?.role === 'mla') return state.user;
+    return null;
+  }, [state.user]);
+
   // Clear error
   const clearError = useCallback(() => {
     dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
@@ -135,8 +204,12 @@ export function AuthProvider({ children }) {
   const value = {
     ...state,
     login,
+    cmAdminLogin,
+    mlaLogin,
     register,
     logout,
+    mlaLogout,
+    getCurrentMLA,
     clearError,
   };
 

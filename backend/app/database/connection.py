@@ -68,5 +68,6 @@ def init_db() -> None:
     import app.models.notification  # noqa: F401
     import app.models.feedback  # noqa: F401
     import app.models.analytics  # noqa: F401
+    import app.models.leadership  # noqa: F401 — ensures leadership tables are created
 
     Base.metadata.create_all(bind=engine)

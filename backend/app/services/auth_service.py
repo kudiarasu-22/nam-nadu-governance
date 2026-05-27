@@ -43,11 +43,16 @@ def authenticate_user(db: Session, identifier: str, password: str) -> User | Non
 def register_user(db: Session, data: RegisterRequest) -> User:
     """
     Register a new user.
-    Raises ValueError if the email is already in use.
+    Raises ValueError if the email or phone is already in use.
     """
-    existing = db.query(User).filter(User.email == data.email).first()
-    if existing:
+    existing_email = db.query(User).filter(User.email == data.email).first()
+    if existing_email:
         raise ValueError("Email already registered")
+
+    if data.phone:
+        existing_phone = db.query(User).filter(User.phone == data.phone).first()
+        if existing_phone:
+            raise ValueError("Phone number already registered")
 
     # Resolve role
     role_name = (
@@ -70,10 +75,16 @@ def register_user(db: Session, data: RegisterRequest) -> User:
         ward=data.ward,
     )
     db.add(user)
-    db.commit()
+    try:
+        db.commit()
+    except Exception as exc:
+        db.rollback()
+        # Catch any remaining DB constraint violations (e.g., race conditions)
+        raise ValueError(f"Registration failed: {str(exc)[:120]}") from exc
     db.refresh(user)
 
     return user
+
 
 
 def create_tokens(user: User) -> dict:

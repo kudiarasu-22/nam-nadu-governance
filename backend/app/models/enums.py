@@ -11,6 +11,8 @@ class RoleName(str, enum.Enum):
     COUNCILLOR = "councillor"
     LEADERSHIP_ADMIN = "leadership_admin"
     VOLUNTEER = "volunteer"
+    MLA = "mla"
+    CM_ADMIN = "cm_admin"
 
 
 class ComplaintStatus(str, enum.Enum):
@@ -48,6 +50,7 @@ class NotificationType(str, enum.Enum):
     SUCCESS = "success"
     WARNING = "warning"
     ERROR = "error"
+    SYSTEM = "system"
     COMPLAINT_UPDATE = "complaint_update"
     PROJECT_UPDATE = "project_update"
     EMERGENCY = "emergency"

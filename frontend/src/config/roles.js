@@ -10,6 +10,8 @@ export const ROLES = {
   COUNCILLOR: 'councillor',
   LEADERSHIP_ADMIN: 'leadership_admin',
   VOLUNTEER: 'volunteer',
+  MLA: 'mla',
+  CM_ADMIN: 'cm_admin',
 };
 
 // Human-readable role labels
@@ -19,6 +21,8 @@ export const ROLE_LABELS = {
   [ROLES.COUNCILLOR]: 'Councillor',
   [ROLES.LEADERSHIP_ADMIN]: 'Leadership Admin',
   [ROLES.VOLUNTEER]: 'Volunteer',
+  [ROLES.MLA]: 'MLA',
+  [ROLES.CM_ADMIN]: 'CM Admin',
 };
 
 // Role-based permissions matrix
@@ -71,6 +75,8 @@ export const ROLE_DASHBOARDS = {
   [ROLES.COUNCILLOR]: '/dashboard/leadership',
   [ROLES.LEADERSHIP_ADMIN]: '/dashboard/leadership',
   [ROLES.VOLUNTEER]: '/dashboard/volunteer',
+  [ROLES.MLA]: '/dashboard/mla',
+  [ROLES.CM_ADMIN]: '/dashboard/cm',
 };
 
 // Role-based default redirect after login

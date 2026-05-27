@@ -39,9 +39,17 @@ def get_current_user(
             detail="Invalid token payload",
         )
 
+    try:
+        user_id_int = int(user_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token payload structure",
+        )
+
     user = (
         db.query(User)
-        .filter(User.id == int(user_id), User.is_deleted == False)  # noqa: E712
+        .filter(User.id == user_id_int, User.is_deleted == False)  # noqa: E712
         .first()
     )
 

@@ -81,6 +81,9 @@ app.include_router(analytics.router)
 app.include_router(projects.router)
 app.include_router(leadership.router)
 app.include_router(volunteer.router)
+from app.routers import mla_auth, cm_admin
+app.include_router(mla_auth.router)
+app.include_router(cm_admin.router)
 
 
 # ── Root ─────────────────────────────────────────────────────────
