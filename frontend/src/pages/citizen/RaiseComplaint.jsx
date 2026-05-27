@@ -44,9 +44,15 @@ export default function RaiseComplaint() {
   useEffect(() => {
     masterService.getCategories().then(data => {
       setCategories(data.map(c => ({ value: c.id, label: c.name })));
+    }).catch(err => {
+      console.error(err);
+      showToast('Failed to load categories', 'error');
     });
     masterService.getDistricts().then(data => {
       setDistricts(data.map(d => ({ value: d.id, label: d.name })));
+    }).catch(err => {
+      console.error(err);
+      showToast('Failed to load districts', 'error');
     });
   }, []);
 
@@ -55,6 +61,9 @@ export default function RaiseComplaint() {
       masterService.getWards(form.districtId).then(data => {
         setWards(data.map(w => ({ value: w.id, label: `${w.ward_number} - ${w.ward_name || ''}` })));
         setForm(f => ({ ...f, wardId: '', areaId: '', locationDetailId: '' }));
+      }).catch(err => {
+        console.error(err);
+        showToast('Failed to load wards', 'error');
       });
     } else {
       setWards([]);
@@ -66,6 +75,9 @@ export default function RaiseComplaint() {
       masterService.getAreas(form.wardId).then(data => {
         setAreas(data.map(a => ({ value: a.id, label: a.name })));
         setForm(f => ({ ...f, areaId: '', locationDetailId: '' }));
+      }).catch(err => {
+        console.error(err);
+        showToast('Failed to load areas', 'error');
       });
     } else {
       setAreas([]);
@@ -77,6 +89,9 @@ export default function RaiseComplaint() {
       masterService.getLocationDetails(form.areaId).then(data => {
         setLocationDetails(data.map(l => ({ value: l.id, label: l.street_name || l.landmark })));
         setForm(f => ({ ...f, locationDetailId: '' }));
+      }).catch(err => {
+        console.error(err);
+        showToast('Failed to load location details', 'error');
       });
     } else {
       setLocationDetails([]);
@@ -197,7 +212,7 @@ export default function RaiseComplaint() {
       });
       setFiles([]);
       if (!isDraft) {
-        navigate('/citizen/track');
+        navigate('/complaints');
       }
     } catch (error) {
       showToast(error?.response?.data?.detail || 'An error occurred', 'error');
