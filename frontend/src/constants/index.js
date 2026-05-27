@@ -6,7 +6,18 @@
 export const APP_NAME = import.meta.env.VITE_APP_NAME || 'Nam Nadu';
 export const APP_VERSION = import.meta.env.VITE_APP_VERSION || '1.0.0';
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+// Helper to ensure API URLs are correctly formatted without duplicate /api/v1 paths
+const getApiBaseUrl = () => {
+  let rawApiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+  // Remove all trailing slashes
+  rawApiUrl = rawApiUrl.replace(/\/+$/, '');
+  // Remove any trailing /api/v1 or /api to avoid duplication
+  rawApiUrl = rawApiUrl.replace(/(\/api\/v1|\/api)+$/, '');
+  // Append standard /api/v1
+  return `${rawApiUrl}/api/v1`;
+};
+
+export const API_BASE_URL = getApiBaseUrl();
 export const WS_BASE_URL = import.meta.env.VITE_WS_URL || 'ws://127.0.0.1:8000/ws';
 
 export const TOKEN_KEY = 'nam_nadu_access_token';
