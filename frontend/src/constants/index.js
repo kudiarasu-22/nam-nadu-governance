@@ -31,6 +31,12 @@ export const TOKEN_KEY = 'nam_nadu_access_token';
 export const REFRESH_TOKEN_KEY = 'nam_nadu_refresh_token';
 export const USER_KEY = 'nam_nadu_user';
 
+export const MLA_TOKEN_KEY = 'mla_token';
+export const MLA_USER_KEY = 'mla_user';
+
+export const CM_TOKEN_KEY = 'cm_token';
+export const CM_USER_KEY = 'cm_user';
+
 export const COMPLAINT_STATUS = {
   DRAFT: 'draft',
   SUBMITTED: 'submitted',

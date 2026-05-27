@@ -9,6 +9,8 @@ import ProtectedRoute from './ProtectedRoute';
 import { ROLES } from '@/config/roles';
 import { FullPageLoader } from '@/components/feedback/LoadingSpinner';
 import RoleRedirect from './RoleRedirect';
+import MLAProtectedRoute from './MLAProtectedRoute';
+import CMProtectedRoute from './CMProtectedRoute';
 
 // Auth pages (small — eager loaded)
 import LoginPage from '@/pages/LoginPage';
@@ -16,6 +18,7 @@ import RegisterPage from '@/pages/RegisterPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import UnauthorizedPage from '@/pages/UnauthorizedPage';
 import LandingPage from '@/pages/LandingPage';
+import LeadershipPage from '@/pages/LeadershipPage';
 import MLARegister from '@/pages/leadership/MLARegister';
 import CMLogin from '@/pages/leadership/CMLogin';
 
@@ -78,6 +81,7 @@ export default function AppRouter() {
     <Routes>
       {/* Landing Page (Root) */}
       <Route path="/" element={<LandingPage />} />
+      <Route path="/leadership" element={<LeadershipPage />} />
 
       {/* Auth routes (no sidebar) */}
       <Route element={<AuthLayout />}>
@@ -101,8 +105,6 @@ export default function AppRouter() {
         <Route path="/dashboard/citizen" element={<ProtectedRoute allowedRoles={[...citizenRoles, ...leadershipRoles]}><LazyPage><CitizenHome /></LazyPage></ProtectedRoute>} />
         <Route path="/dashboard/officer" element={<ProtectedRoute allowedRoles={officerRoles}><LazyPage><OfficerHome /></LazyPage></ProtectedRoute>} />
         <Route path="/dashboard/leadership" element={<ProtectedRoute allowedRoles={leadershipRoles}><LazyPage><SmartGovernance /></LazyPage></ProtectedRoute>} />
-        <Route path="/dashboard/mla" element={<ProtectedRoute allowedRoles={mlaRoles}><LazyPage><MLADashboard /></LazyPage></ProtectedRoute>} />
-        <Route path="/dashboard/cm" element={<ProtectedRoute allowedRoles={cmRoles}><LazyPage><CMDashboard /></LazyPage></ProtectedRoute>} />
         <Route path="/dashboard/volunteer" element={<ProtectedRoute allowedRoles={[...volunteerRoles, ...leadershipRoles]}><LazyPage><VolunteerHome /></LazyPage></ProtectedRoute>} />
 
         {/* Citizen features */}
@@ -130,6 +132,22 @@ export default function AppRouter() {
       {/* Error pages */}
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="*" element={<NotFoundPage />} />
+      
+      {/* Isolated Leadership Routes */}
+      <Route path="/dashboard/mla" element={
+        <MLAProtectedRoute>
+          <div className="min-h-screen bg-surface-light dark:bg-surface-dark p-4 md:p-6 lg:p-8">
+            <LazyPage><MLADashboard /></LazyPage>
+          </div>
+        </MLAProtectedRoute>
+      } />
+      <Route path="/dashboard/cm" element={
+        <CMProtectedRoute>
+          <div className="min-h-screen bg-surface-light dark:bg-surface-dark p-4 md:p-6 lg:p-8">
+            <LazyPage><CMDashboard /></LazyPage>
+          </div>
+        </CMProtectedRoute>
+      } />
     </Routes>
   );
 }

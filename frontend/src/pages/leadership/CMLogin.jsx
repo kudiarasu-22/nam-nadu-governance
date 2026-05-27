@@ -74,6 +74,7 @@ export default function CMLogin() {
       <form onSubmit={handleSubmit} className="space-y-5">
         <Input
           label="CM Admin Email"
+          type="email"
           placeholder="e.g., cm@namnadu.gov.in"
           value={form.email}
           onChange={updateField('email')}

@@ -17,7 +17,15 @@ const api = axios.create({
 // Request interceptor — attach JWT token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem(TOKEN_KEY);
+    let token = null;
+    if (config.url?.startsWith('/cm_admin')) {
+      token = localStorage.getItem('cm_token');
+    } else if (config.url?.startsWith('/leadership') && !config.url?.includes('register') && !config.url?.includes('login')) {
+      token = localStorage.getItem('mla_token');
+    } else {
+      token = localStorage.getItem(TOKEN_KEY);
+    }
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -32,36 +40,44 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If 401 and we haven't tried refreshing yet
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+      // For citizen/officer requests, try refresh
+      if (!originalRequest.url?.startsWith('/cm_admin') && !originalRequest.url?.startsWith('/leadership')) {
+        originalRequest._retry = true;
+        try {
+          const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+          if (!refreshToken) throw new Error('No refresh token');
 
-      try {
-        const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
-        if (!refreshToken) {
-          throw new Error('No refresh token');
+          const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+            refresh_token: refreshToken,
+          });
+
+          localStorage.setItem(TOKEN_KEY, data.access_token);
+          if (data.refresh_token) {
+            localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
+          }
+
+          originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
+          return api(originalRequest);
+        } catch (refreshError) {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(REFRESH_TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+          window.location.href = '/login';
+          return Promise.reject(refreshError);
         }
-
-        const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-          refresh_token: refreshToken,
-        });
-
-        // Save new tokens
-        localStorage.setItem(TOKEN_KEY, data.access_token);
-        if (data.refresh_token) {
-          localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
+      } else {
+        // MLA / CM 401 - direct redirect
+        if (originalRequest.url?.startsWith('/cm_admin')) {
+          localStorage.removeItem('cm_token');
+          localStorage.removeItem('cm_user');
+          window.location.href = '/cm/login';
+        } else if (originalRequest.url?.startsWith('/leadership')) {
+          localStorage.removeItem('mla_token');
+          localStorage.removeItem('mla_user');
+          window.location.href = '/mla/login';
         }
-
-        // Retry original request with new token
-        originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
-        return api(originalRequest);
-      } catch (refreshError) {
-        // Refresh failed — clear tokens and redirect to login
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(REFRESH_TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
-        window.location.href = '/login';
-        return Promise.reject(refreshError);
+        return Promise.reject(error);
       }
     }
 

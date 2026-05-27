@@ -14,7 +14,6 @@ import { Eye, EyeOff, ShieldCheck } from 'lucide-react';
 const roleOptions = [
   { value: ROLES.CITIZEN, label: ROLE_LABELS[ROLES.CITIZEN] },
   { value: ROLES.OFFICER, label: ROLE_LABELS[ROLES.OFFICER] },
-  { value: ROLES.LEADERSHIP_ADMIN, label: ROLE_LABELS[ROLES.LEADERSHIP_ADMIN] },
   { value: ROLES.VOLUNTEER, label: ROLE_LABELS[ROLES.VOLUNTEER] },
 ];
 

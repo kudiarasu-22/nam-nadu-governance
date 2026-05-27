@@ -7,32 +7,22 @@ export default function LandingPage() {
 
   const portals = [
     {
-      title: "Citizen & Officer Services",
-      description: "Raise complaints, track issues, and manage civic duties.",
+      title: "Citizen Governance Portal",
+      description: "Raise complaints, track issues, civic governance, and officer coordination.",
       icon: <UserCog className="w-10 h-10 text-primary-600 dark:text-primary-400" />,
       color: "bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800",
       buttonText: "Enter Portal",
       action: () => navigate('/login'),
-      roles: "Citizens & Officers"
+      roles: "Citizen • Officer • Volunteer"
     },
     {
-      title: "MLA Leadership Portal",
-      description: "Monitor governance, projects, and emergency alerts in your ward.",
-      icon: <Building2 className="w-10 h-10 text-accent-600 dark:text-accent-400" />,
+      title: "Leadership Governance Portal",
+      description: "Ward governance monitoring, MLA analytics, emergency alerts, and statewide CM monitoring.",
+      icon: <ShieldCheck className="w-10 h-10 text-accent-600 dark:text-accent-400" />,
       color: "bg-accent-50 dark:bg-accent-900/20 border-accent-200 dark:border-accent-800",
-      buttonText: "MLA Login",
-      action: () => navigate('/mla/login'),
-      secondaryAction: { text: "Register", onClick: () => navigate('/leadership/register') },
-      roles: "Members of Legislative Assembly"
-    },
-    {
-      title: "Chief Minister Governance",
-      description: "Supervise statewide analytics, district monitoring, and MLA performance.",
-      icon: <ShieldCheck className="w-10 h-10 text-warning-600 dark:text-warning-400" />,
-      color: "bg-warning-50 dark:bg-warning-900/20 border-warning-200 dark:border-warning-800",
-      buttonText: "CM Admin Login",
-      action: () => navigate('/cm/login'),
-      roles: "Chief Minister & State Admins"
+      buttonText: "Enter Leadership Portal",
+      action: () => navigate('/leadership'),
+      roles: "MLA • Chief Minister"
     }
   ];
 
@@ -57,7 +47,7 @@ export default function LandingPage() {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full z-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full z-10">
         {portals.map((portal, idx) => (
           <motion.div
             key={idx}
