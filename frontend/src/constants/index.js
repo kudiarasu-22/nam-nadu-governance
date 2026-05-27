@@ -8,7 +8,7 @@ export const APP_VERSION = import.meta.env.VITE_APP_VERSION || '1.0.0';
 
 // Helper to ensure API URLs are correctly formatted without duplicate /api/v1 paths
 const getApiBaseUrl = () => {
-  let rawApiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+  let rawApiUrl = import.meta.env.VITE_API_URL || '';
   // Remove all trailing slashes
   rawApiUrl = rawApiUrl.replace(/\/+$/, '');
   // Remove any trailing /api/v1 or /api to avoid duplication
@@ -18,7 +18,7 @@ const getApiBaseUrl = () => {
 };
 
 export const API_BASE_URL = getApiBaseUrl();
-export const WS_BASE_URL = import.meta.env.VITE_WS_URL || 'ws://127.0.0.1:8000/ws';
+export const WS_BASE_URL = import.meta.env.VITE_WS_URL || '';
 
 export const TOKEN_KEY = 'nam_nadu_access_token';
 export const REFRESH_TOKEN_KEY = 'nam_nadu_refresh_token';

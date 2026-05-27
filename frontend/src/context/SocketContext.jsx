@@ -17,8 +17,8 @@ export function SocketProvider({ children }) {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    // Only connect when authenticated
-    if (!isAuthenticated || !user) {
+    // Only connect when authenticated and WS_BASE_URL is provided
+    if (!isAuthenticated || !user || !WS_BASE_URL) {
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current = null;
